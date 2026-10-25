@@ -810,6 +810,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const finalScore = document.getElementById('final-score');
     const timerDisplay = document.getElementById('timer');
 
+    progressIndicator.innerText = `Total ${quizData.length} Soal`;
+
     // Buttons Element
     const startBtn = document.getElementById('start-btn');
     const hintBtn = document.getElementById('hint-btn');
