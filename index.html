@@ -4,22 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kuis Bahasa Inggris Keperawatan (Bab 1 - 7)</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .progress-bar-fill { transition: width 0.3s ease; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between">
 
     <!-- Header -->
-    <header class="bg-teal-700 text-white shadow-md py-4 px-6 flex justify-between items-center">
-        <div>
-            <h1 class="text-xl font-bold">Kuis Bahasa Inggris Keperawatan</h1>
-            <p class="text-xs text-teal-200">Materi Bab 1 s.d. Bab 7 (60 Soal)</p>
+    <header class="bg-teal-700 text-white shadow-md flex flex-col">
+        <div class="py-4 px-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold">Kuis Bahasa Inggris Keperawatan</h1>
+                <p class="text-xs text-teal-200">Materi Bab 1 s.d. Bab 7</p>
+            </div>
+            <div id="progress-indicator" class="bg-teal-800 px-3 py-1.5 rounded-lg text-sm font-semibold border border-teal-600">
+                Soal 0 / 0
+            </div>
         </div>
-        <div id="progress-indicator" class="bg-teal-800 px-3 py-1.5 rounded-lg text-sm font-semibold border border-teal-600">
-            Soal 1 / 60
+        <!-- Progress Bar -->
+        <div class="w-full bg-teal-900 h-1.5">
+            <div id="progress-bar" class="progress-bar-fill bg-teal-400 h-1.5 w-0"></div>
         </div>
     </header>
 
@@ -30,7 +37,7 @@
         <div id="welcome-screen" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center">
             <div class="w-16 h-16 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">🩺</div>
             <h2 class="text-2xl font-bold text-slate-900 mb-2">Uji Pemahaman Modul</h2>
-            <p class="text-slate-600 mb-6 text-sm max-w-lg mx-auto">Kuis ini mencakup 60 soal komprehensif dari Bab 1 hingga Bab 7: Part of Speech, Admission, Asking/Offering Help, Paragraph Structure, Simple Present Tense, Report Text, dan Asking & Giving Direction.</p>
+            <p class="text-slate-600 mb-6 text-sm max-w-lg mx-auto">Kuis ini mencakup soal komprehensif dari Bab 1 hingga Bab 7: Part of Speech, Admission, Asking/Offering Help, Paragraph Structure, Simple Present Tense, Report Text, dan Asking & Giving Direction.</p>
             <button onclick="startQuiz()" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-8 py-3 rounded-xl transition duration-200 shadow-sm">Mulai Kuis Sekarang</button>
         </div>
 
@@ -38,7 +45,7 @@
         <div id="quiz-screen" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
             <div class="flex justify-between items-center mb-4">
                 <span id="question-tag" class="bg-teal-50 text-teal-700 text-xs font-semibold px-2.5 py-1 rounded-md border border-teal-200">Kategori</span>
-                <span id="timer" class="text-xs font-medium text-slate-400">⏱️ Waktu: 00:00</span>
+                <span id="timer" class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded">⏱️ 00:00</span>
             </div>
             
             <h3 id="question-text" class="text-lg font-semibold text-slate-900 mb-6 leading-relaxed">Pertanyaan akan muncul di sini...</h3>
@@ -62,11 +69,13 @@
         <div id="result-screen" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center">
             <div class="w-16 h-16 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">🏆</div>
             <h2 class="text-2xl font-bold text-slate-900 mb-2">Kuis Selesai!</h2>
-            <p class="text-slate-600 mb-6 text-sm">Berikut adalah hasil pencapaian Anda dalam menyelesaikan 60 soal materi Keperawatan.</p>
+            <p id="result-message" class="text-slate-600 mb-6 text-sm">Berikut adalah hasil pencapaian Anda.</p>
             
             <div class="bg-slate-50 border border-slate-200 p-6 rounded-xl max-w-xs mx-auto mb-6">
-                <div class="text-4xl font-extrabold text-teal-600 mb-1" id="final-score">0 / 60</div>
-                <div class="text-xs text-slate-500 font-medium uppercase tracking-wider">Skor Akhir Anda</div>
+                <div class="text-4xl font-extrabold text-teal-600 mb-1" id="final-score">0 / 0</div>
+                <div class="text-xs text-slate-500 font-medium uppercase tracking-wider mb-2">Skor Akhir Anda</div>
+                <div id="percentage-score" class="text-lg font-bold text-slate-700">0%</div>
+                <div class="text-xs text-slate-400 mt-2" id="time-spent">Waktu: 00:00</div>
             </div>
 
             <button onclick="restartQuiz()" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-8 py-3 rounded-xl transition duration-200 shadow-sm">Ulangi Kuis</button>
@@ -190,7 +199,7 @@
                     { text: "Team", isCorrect: false, rationale: "Team is a collective noun." },
                     { text: "Doctor", isCorrect: false, rationale: "Doctor is a common noun." }
                 ],
-                    hint: "Bahan atau unsur alam yang berwujud material."
+                hint: "Bahan atau unsur alam yang berwujud material."
             },
 
             // BAB 2: ADMISSION TO HOSPITAL
@@ -212,7 +221,7 @@
                     { text: "For vacation and relaxation", isCorrect: false, rationale: "Hospitals are for medical care, not vacation." },
                     { text: "For observation, investigation, treatment, and nursing care", isCorrect: true, rationale: "Admission allows medical teams to monitor, diagnose, and treat patients." },
                     { text: "To buy medical equipment", isCorrect: false, rationale: "Patients do not stay overnight to buy equipment." },
-                    { text: "To work as a hospital staff", isCorrect: false, rationale: "Admission is for patients, not staff employment." },
+                    { text: "To work as a hospital staff", isCorrect: false, rationale: "Admission is for patients, not staff employment." }
                 ],
                 hint: "Tujuan pasien tinggal di rumah sakit untuk observasi dan pengobatan."
             },
@@ -225,7 +234,7 @@
                     { text: "Patients who discharge themselves", isCorrect: false, rationale: "This is discharge against medical advice." },
                     { text: "Walk-in patients without any appointment", isCorrect: false, rationale: "Walk-ins are usually urgent or emergency cases." }
                 ],
-                hat: "Proses masuk yang sudah direncanakan sebelumnya melalui rujukan."
+                hint: "Proses masuk yang sudah direncanakan sebelumnya melalui rujukan."
             },
             {
                 tag: "Bab 2: Admission to Hospital",
@@ -307,7 +316,7 @@
 
             // BAB 3: ASKING FOR, OFFERING AND GIVING HELP
             {
-                tag: "Bab 3: Asking, Offering & Giving Help",
+                tag: "Bab 3: Asking & Offering Help",
                 question: "Which of the following expressions is used to *offer* help to a patient?",
                 options: [
                     { text: "Could you help me move this bed?", isCorrect: false, rationale: "This is asking for help, not offering." },
@@ -318,7 +327,7 @@
                 hint: "Frasa yang diawali dengan 'May I...' atau 'Would you like...'"
             },
             {
-                tag: "Bab 3: Asking, Offering & Giving Help",
+                tag: "Bab 3: Asking & Offering Help",
                 question: "Choose the correct response when accepting help:",
                 options: [
                     { text: "No, thank you, I can manage.", isCorrect: false, rationale: "This is declining help." },
@@ -329,7 +338,7 @@
                 hint: "Respon positif saat seseorang menawarkan bantuan."
             },
             {
-                tag: "Bab 3: Asking, Offering & Giving Help",
+                tag: "Bab 3: Asking & Offering Help",
                 question: "Which auxiliary modal is commonly used in polite requests?",
                 options: [
                     { text: "Could", isCorrect: true, rationale: "'Could' is used to make polite requests in English." },
@@ -340,7 +349,7 @@
                 hint: "Bentuk sopan dari 'can'."
             },
             {
-                tag: "Bab 3: Asking, Offering & Giving Help",
+                tag: "Bab 3: Asking & Offering Help",
                 question: "A nurse says to a patient: 'Let me check your blood pressure.' This is an example of:",
                 options: [
                     { text: "Giving help / offering assistance", isCorrect: true, rationale: "Stating 'Let me...' is a proactive way of offering and giving help." },
@@ -351,7 +360,7 @@
                 hint: "Menyatakan kesiapan memberikan tindakan keperawatan."
             },
             {
-                tag: "Bab 3: Asking, Offering & Giving Help",
+                tag: "Bab 3: Asking & Offering Help",
                 question: "Which of the following is a polite way to *ask* for assistance from a colleague?",
                 options: [
                     { text: "Do this for me now.", isCorrect: false, rationale: "This is a command, not a polite request." },
@@ -362,7 +371,7 @@
                 hint: "Gunakan 'Could you please...' saat meminta tolong rekan kerja."
             },
             {
-                tag: "Bab 3: Asking, Offering & Giving Help",
+                tag: "Bab 3: Asking & Offering Help",
                 question: "How do you politely decline an offer of help?",
                 options: [
                     { text: "That's terrible!", isCorrect: false, rationale: "Unrelated." },
@@ -373,7 +382,7 @@
                 hint: "Ucapkan terima kasih namun tolak dengan sopan."
             },
             {
-                tag: "Bab 3: Asking, Offering & Giving Help",
+                tag: "Bab 3: Asking & Offering Help",
                 question: "Which phrase indicates *giving help*?",
                 options: [
                     { text: "I'd be happy to help you with your wheelchair.", isCorrect: true, rationale: "Expressing willingness confirms giving help." },
@@ -384,7 +393,7 @@
                 hint: "Menyatakan kesediaan membantu."
             },
             {
-                tag: "Bab 3: Asking, Offering & Giving Help",
+                tag: "Bab 3: Asking & Offering Help",
                 question: "When a nurse asks 'What can I do for you?', the nurse is:",
                 options: [
                     { text: "Offering help", isCorrect: true, rationale: "'What can I do for you?' is a standard offering phrase." },
@@ -395,7 +404,7 @@
                 hint: "Kalimat tanya terbuka untuk menawarkan bantuan."
             },
             {
-                tag: "Bab 3: Asking, Offering & Giving Help",
+                tag: "Bab 3: Asking & Offering Help",
                 question: "Which response shows a refusal of help due to being busy?",
                 options: [
                     { text: "Sorry, I am busy right now, maybe later.", isCorrect: true, rationale: "This politely explains inability to help at the moment." },
@@ -406,7 +415,7 @@
                 hint: "Permohonan maaf karena sedang sibuk."
             },
             {
-                tag: "Bab 3: Asking, Offering & Giving Help",
+                tag: "Bab 3: Asking & Offering Help",
                 question: "Which sentence uses modal 'would' for a polite offer?",
                 options: [
                     { text: "Would you like some assistance with your medication?", isCorrect: true, rationale: "'Would you like...' is a standard polite offering structure." },
@@ -417,7 +426,7 @@
                 hint: "Struktur 'Would you like...' untuk menawarkan sesuatu."
             },
 
-            // BAB 4: TOPIC, SUPPORTING AND CONCLUDING SENTENCES
+            // BAB 4: PARAGRAPH STRUCTURE
             {
                 tag: "Bab 4: Paragraph Structure",
                 question: "What is the function of a 'Topic Sentence' in a paragraph?",
@@ -636,7 +645,7 @@
                     { text: "The human heart pumps blood throughout the body.", isCorrect: true, rationale: "General biological facts are stated in the simple present tense." },
                     { text: "The heart pumped blood yesterday.", isCorrect: false, rationale: "Past tense." },
                     { text: "The heart will pump blood tomorrow.", isCorrect: false, rationale: "Future tense." },
-                    { text: "The heart is pumping blood right now.", isCorrect: false, rationale: "Continuous tense." },
+                    { text: "The heart is pumping blood right now.", isCorrect: false, rationale: "Continuous tense." }
                 ],
                 hint: "Fakta biologis umum menggunakan simple present."
             },
@@ -866,12 +875,14 @@
             }
         ];
 
+        // State Variables
         let currentQuestionIndex = 0;
         let score = 0;
         let selectedOption = null;
         let timerInterval = null;
         let secondsElapsed = 0;
 
+        // Elements
         const welcomeScreen = document.getElementById('welcome-screen');
         const quizScreen = document.getElementById('quiz-screen');
         const resultScreen = document.getElementById('result-screen');
@@ -880,13 +891,16 @@
         const optionsContainer = document.getElementById('options-container');
         const nextBtn = document.getElementById('next-btn');
         const progressIndicator = document.getElementById('progress-indicator');
+        const progressBar = document.getElementById('progress-bar');
         const hintBox = document.getElementById('hint-box');
         const hintText = document.getElementById('hint-text');
         const finalScore = document.getElementById('final-score');
         const timerDisplay = document.getElementById('timer');
 
+        // Functions
         function startQuiz() {
             welcomeScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
             quizScreen.classList.remove('hidden');
             currentQuestionIndex = 0;
             score = 0;
@@ -901,11 +915,165 @@
                 secondsElapsed++;
                 let mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
                 let secs = (secondsElapsed % 60).toString().padStart(2, '0');
-                timerDisplay.innerText = `⏱️ Waktu: ${mins}:${secs}`;
+                timerDisplay.innerText = `⏱️ ${mins}:${secs}`;
             }, 1000);
         }
 
         function loadQuestion() {
-            selectedOption = null;
-            nextBtn.disabled = true;
-           
+            selectedOption = null; // Reset selection
+            nextBtn.disabled = true; // Disable next button initially
+            hintBox.classList.add('hidden'); // Hide hint 
+            
+            // Hapus rationale box jika ada dari soal sebelumnya
+            const oldRationale = document.getElementById('rationale-box');
+            if(oldRationale) oldRationale.remove();
+
+            const totalQ = quizData.length;
+            const currentQ = quizData[currentQuestionIndex];
+            
+            // Set text & progress
+            questionTag.innerText = currentQ.tag;
+            questionText.innerText = currentQ.question;
+            hintText.innerText = currentQ.hint;
+            progressIndicator.innerText = `Soal ${currentQuestionIndex + 1} / ${totalQ}`;
+            
+            // Update progress bar
+            const progressPercentage = ((currentQuestionIndex) / totalQ) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+
+            // Ubah teks tombol jika soal terakhir
+            if (currentQuestionIndex === totalQ - 1) {
+                nextBtn.innerText = "Selesai";
+            } else {
+                nextBtn.innerText = "Selanjutnya";
+            }
+
+            // Render options
+            optionsContainer.innerHTML = '';
+            currentQ.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-4 rounded-xl border border-slate-200 hover:border-teal-500 hover:bg-teal-50 transition duration-200 font-medium text-slate-700 bg-white mb-3 relative flex items-center justify-between group';
+                
+                const textSpan = document.createElement('span');
+                textSpan.innerText = opt.text;
+                textSpan.className = "pr-6";
+                
+                const iconSpan = document.createElement('span');
+                iconSpan.className = "text-xl absolute right-4 opacity-0 transition-opacity duration-200";
+                
+                btn.appendChild(textSpan);
+                btn.appendChild(iconSpan);
+                
+                btn.onclick = () => selectOption(opt, btn, currentQ.options, iconSpan);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedOpt, btnElement, allOptions, selectedIconSpan) {
+            // Prevent multiple clicks
+            if (selectedOption !== null) return;
+            selectedOption = selectedOpt;
+            
+            const isCorrect = selectedOpt.isCorrect;
+            if (isCorrect) {
+                score++;
+            }
+
+            // Get all rendered buttons
+            const buttons = optionsContainer.querySelectorAll('button');
+            
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true; // Disable all
+                btn.classList.remove('hover:border-teal-500', 'hover:bg-teal-50', 'cursor-pointer'); // Remove hover states
+                
+                const icon = btn.querySelector('span:last-child');
+                icon.classList.remove('opacity-0');
+
+                if (allOptions[idx].isCorrect) {
+                    // Highlight correct answer
+                    btn.classList.add('bg-emerald-50', 'border-emerald-500', 'text-emerald-800');
+                    btn.classList.remove('border-slate-200', 'text-slate-700');
+                    icon.innerText = '✅';
+                } else if (btn === btnElement && !isCorrect) {
+                    // Highlight wrong selected answer
+                    btn.classList.add('bg-rose-50', 'border-rose-500', 'text-rose-800');
+                    btn.classList.remove('border-slate-200', 'text-slate-700');
+                    icon.innerText = '❌';
+                } else {
+                    // Dim other wrong answers
+                    btn.classList.add('opacity-50');
+                }
+            });
+
+            // Show Feedback/Rationale Box
+            const rationaleDiv = document.createElement('div');
+            rationaleDiv.id = 'rationale-box';
+            rationaleDiv.className = `mt-4 p-4 rounded-xl text-sm border shadow-sm animate-fade-in ${
+                isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'
+            }`;
+            rationaleDiv.innerHTML = `
+                <div class="font-bold mb-1 ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">
+                    ${isCorrect ? '🎉 Benar!' : '💡 Kurang Tepat.'}
+                </div>
+                <div>${selectedOpt.rationale}</div>
+            `;
+            optionsContainer.appendChild(rationaleDiv);
+
+            // Enable Next Button
+            nextBtn.disabled = false;
+        }
+
+        function toggleHint() {
+            if (hintBox.classList.contains('hidden')) {
+                hintBox.classList.remove('hidden');
+            } else {
+                hintBox.classList.add('hidden');
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            clearInterval(timerInterval); // Stop timer
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            progressBar.style.width = `100%`;
+
+            const totalQ = quizData.length;
+            const percentage = Math.round((score / totalQ) * 100);
+
+            // Update UI
+            finalScore.innerText = `${score} / ${totalQ}`;
+            document.getElementById('percentage-score').innerText = `Nilai: ${percentage}%`;
+            
+            // Format waktu
+            let mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+            let secs = (secondsElapsed % 60).toString().padStart(2, '0');
+            document.getElementById('time-spent').innerText = `Diselesaikan dalam: ${mins} menit ${secs} detik`;
+
+            // Custom Message
+            const msgElement = document.getElementById('result-message');
+            if (percentage >= 90) {
+                msgElement.innerText = "Luar biasa! Pemahaman Anda tentang materi Keperawatan sangat solid.";
+            } else if (percentage >= 70) {
+                msgElement.innerText = "Kerja bagus! Anda sudah memahami sebagian besar materi dengan baik.";
+            } else if (percentage >= 50) {
+                msgElement.innerText = "Cukup baik, tapi masih ada beberapa konsep yang perlu diulang.";
+            } else {
+                msgElement.innerText = "Jangan menyerah! Silakan baca kembali modul materi dan coba lagi.";
+            }
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+    </script>
+</body>
+</html>
